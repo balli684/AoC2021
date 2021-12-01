@@ -10,10 +10,6 @@ $input = Get-Content .\input.txt
 while ($counter -le $input.Count) {
     [int]$newvalue = $one + $two + $three
 
-    Write-Host "$one $two $three"
-    Write-Host $oldvalue
-    Write-Host $newvalue
-
     if ($newvalue -gt $oldvalue) {
         $awnser++
     }
