@@ -13,25 +13,27 @@ else {
 
 $input = $input -split ","
 
-$days = 80
-$day = 0
+$counter = New-Object "object[]" 9
 
-while ($day -lt $days) {
-    $count = 0
-    $maxcount = $input.Count
-    while ($count -lt $maxcount) {
-        if ($input[$count] -gt 0) {
-            [int]$new = $input[$count]
-            $new--
-            $input[$count] = $new
-        }
-        else {
-            $input[$count] = 6
-            $input += 8
-        }
-        $count++
-    }
-    $day++
+foreach ($number in $input) {
+    $counter[$number]++
 }
 
-$input.Count
+$days = 80
+
+while ($days -gt 0) {
+    $new = $counter[0]
+    $counter[7] += $new
+    for ($x=0;$x -le 7;$x++){
+        $counter[$x] = $counter[$x + 1]
+    }
+    $counter[8] = $new
+    $days--
+}
+
+$answer = 0
+$counter | foreach {$answer += $_}
+
+#$counter
+$answer
+
