@@ -4,6 +4,8 @@ param (
     [switch]$test = $false
 )
 
+$sw = [System.Diagnostics.Stopwatch]::StartNew()
+
 if ($test) {
     $in = Get-Content .\testinput.txt
 }
@@ -11,28 +13,25 @@ else {
     $in = Get-Content .\input.txt
 }
 
-$in = $in -split ","
+$crabs = $in -split "," | Sort-Object | Group-Object
 
-[int]$minfuel = 0
+[array]$minfuel = @()
 
-[int]$max = ($in | Measure-Object -Maximum).Maximum
-[int]$pos = ($in | Measure-Object -Minimum).Minimum
+[int]$max = $crabs[-1].name
+[int]$pos = $crabs[0].name
 
 while ($pos -le $max){
     [int]$fuel = 0
-    foreach ($crab in $in){
-        [int]$crab = $crab
-        [int]$distance = [math]::abs($crab - $pos)
-        [int]$consumption = 0
-        for($x = 1; $x -le $distance; $x++){
-            $consumption += $x
-        }
-        $fuel += $consumption
+    foreach ($crab in $crabs){
+        [int]$distance = [math]::abs($pos - [int]$crab.name)
+        [int]$consumption = ($distance * ($distance + 1)) / 2
+        $fuel += ($consumption * $crab.count)
     }
-    if (($fuel -lt $minfuel) -or ($minfuel -eq 0)) {
-        $minfuel = $fuel
-    } 
+    $minfuel += $fuel
     $pos++
 }
 
-$minfuel
+($minfuel | Measure-Object -Minimum).Minimum
+
+$sw.stop()
+write-host $sw.Elapsed.Milliseconds
