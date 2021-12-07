@@ -13,26 +13,24 @@ else {
     $in = Get-Content .\input.txt
 }
 
-$in = $in -split ","
-$crabs = $in | Group-Object
+#$in = $in -split ","
+$crabs = $in -split "," | Sort-Object | Group-Object
 
-[int]$minfuel = 0
+[array]$minfuel = @()
 
-[int]$max = ($in | Measure-Object -Maximum).Maximum
-[int]$pos = ($in | Measure-Object -Minimum).Minimum
+[int]$max = $crabs[-1].name
+[int]$pos = $crabs[0].name
 
 while ($pos -le $max){
     [int]$fuel = 0
     foreach ($crab in $crabs){
         $fuel += (([math]::abs($pos - [int]$crab.name)) * $crab.count)
     }
-    if (($fuel -lt $minfuel) -or ($minfuel -eq 0)) {
-        $minfuel = $fuel
-    } 
+    $minfuel += $fuel
     $pos++
 }
 
-$minfuel
+($minfuel | Measure-Object -Minimum).Minimum
 
 $sw.stop()
 write-host $sw.Elapsed.Milliseconds
