@@ -4,6 +4,8 @@ param (
     [switch]$test = $false
 )
 
+$sw = [System.Diagnostics.Stopwatch]::StartNew()
+
 if ($test) {
     $in = Get-Content .\testinput.txt
 }
@@ -31,3 +33,7 @@ while ($pos -le $max){
 }
 
 $minfuel
+
+$sw.stop()
+write-host $sw.Elapsed.Milliseconds
+
