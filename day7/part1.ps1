@@ -14,6 +14,7 @@ else {
 }
 
 $in = $in -split ","
+$crabs = $in | Group-Object
 
 [int]$minfuel = 0
 
@@ -22,9 +23,8 @@ $in = $in -split ","
 
 while ($pos -le $max){
     [int]$fuel = 0
-    foreach ($crab in $in){
-        [int]$crab = $crab
-        $fuel += [math]::abs($crab - $pos)
+    foreach ($crab in $crabs){
+        $fuel += (([math]::abs($pos - [int]$crab.name)) * $crab.count)
     }
     if (($fuel -lt $minfuel) -or ($minfuel -eq 0)) {
         $minfuel = $fuel
