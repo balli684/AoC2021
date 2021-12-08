@@ -50,24 +50,30 @@ foreach ($patern in $paterns){
     foreach ($set in $patern) {
         $set = $set
         switch ($set.length){
-            2 {$digits.1 = $set.ToCharArray()}
-            4 {$digits.4 = $set.ToCharArray()}
-            3 {$digits.7 = $set.ToCharArray()}
-            7 {$digits.8 = $set.ToCharArray()}
+            2 {$digits.1 = $set}
+            4 {$digits.4 = $set}
+            3 {$digits.7 = $set}
+            7 {$digits.8 = $set}
         }
     }
     foreach ($set in $patern) {
         if (($set.length -eq 6)){
             if (($digits.4) -and !($digits.9)) {
-                $digits.9 = $set.ToCharArray()
-                foreach ($character in $digits.4) {
+                $digits.9 = $set
+                foreach ($character in ($digits.4).ToCharArray()) {
                     if (!($set.Contains($character))) {
-                        $digits.9 = ''
+                        $digits.9 = @()
                     }
                 }
             }
-            if (($digits.1) -and !($digits.6)) {
-                if (($set.Contains(($digits.1)[0])) -and ($set.Contains(($digits.1)[1]))) {
+            if (($set -ne $digits.9) -and !($digits.6)) {
+                $dif = 0
+                foreach ($character in ($digits.1).ToCharArray()) {
+                    if (!($set.Contains($character))) {
+                        $dif++
+                    }
+                }
+                if ($dif -eq 1) {
                     $digits.6 = $set
                 }
             }
@@ -85,7 +91,7 @@ foreach ($patern in $paterns){
             }
             if ($digits.9 -and ($set -ne $digits.3)) {
                 $dif = 0
-                foreach ($character in (($digits.9).ToCharArray()) ){
+                foreach ($character in ($digits.9).ToCharArray()) {
                     if (!($set.Contains($character))) {
                         $dif++
                     }
@@ -99,15 +105,37 @@ foreach ($patern in $paterns){
             }
         }
     }
-    $output = $outputs[$count] -split 0
-    foreach ($set in $output) {
-        $set
-        foreach ($digit in $digits) {
-            $digit | fl -property *
-            if ($set -eq $digit.value) {
-                $digit.name
+    $digits.0 = ($digits.0).ToCharArray() | Sort-Object
+    $digits.1 = ($digits.1).ToCharArray() | Sort-Object
+    $digits.2 = ($digits.2).ToCharArray() | Sort-Object
+    $digits.3 = ($digits.3).ToCharArray() | Sort-Object
+    $digits.4 = ($digits.4).ToCharArray() | Sort-Object
+    $digits.5 = ($digits.5).ToCharArray() | Sort-Object
+    $digits.6 = ($digits.6).ToCharArray() | Sort-Object
+    $digits.7 = ($digits.7).ToCharArray() | Sort-Object
+    $digits.8 = ($digits.8).ToCharArray() | Sort-Object
+    $digits.9 = ($digits.9).ToCharArray() | Sort-Object
+    
+    $output = $outputs[$count] -split " "
+    $multiply = [math]::Pow(10,($output.Count - 1))
+    foreach ($set in $output -split " ") {
+        $set = $set.ToCharArray() | Sort-Object
+        for ($x = 0; $x -le 9; $x++) {
+            if ($set.Count -eq ($digits.($x)).count) {
+                $same = $true
+                foreach ($character in $digits.($x)) {
+                    if (!($set.Contains($character))) {
+                        $same = $false
+                    }
+                }
+                if ($same) {
+                    $awnser += ($x * $multiply)
+                }
             }
         }
+        $multiply = $multiply / 10
     }
     $count++ 
 }
+
+$awnser
