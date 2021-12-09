@@ -42,29 +42,6 @@ for($ypos=1;$ypos -lt ($grid.Count - 1);$ypos++) {
     }
 }
 
-#$lowpoints
-
 [int]$risklevel = 0
 $lowpoints | foreach {$risklevel += ($_ + 1)}
 $risklevel
-
-
-<#
-
-for($ypos=0;$ypos -lt $grid.Count;$ypos++) {
-    for($xpos=0;$xpos -lt $grid[$ypos].Count;$xpos++) {
-        $color = "Gray"
-        if ($grid[$ypos][$xpos] -lt 6 ){
-            $color = "Yellow"
-        }
-        if ($null -eq ($grid[$ypos][$xpos])) {
-            Write-Host "." -NoNewline
-        }
-        else {
-            write-host $grid[$ypos][$xpos] -NoNewline -ForegroundColor $color
-        }
-        
-    }
-    write-host "`n"
-}
-#>
