@@ -105,21 +105,21 @@ foreach ($patern in $paterns){
             }
         }
     }
-    $digits.0 = ($digits.0).ToCharArray() | Sort-Object
-    $digits.1 = ($digits.1).ToCharArray() | Sort-Object
-    $digits.2 = ($digits.2).ToCharArray() | Sort-Object
-    $digits.3 = ($digits.3).ToCharArray() | Sort-Object
-    $digits.4 = ($digits.4).ToCharArray() | Sort-Object
-    $digits.5 = ($digits.5).ToCharArray() | Sort-Object
-    $digits.6 = ($digits.6).ToCharArray() | Sort-Object
-    $digits.7 = ($digits.7).ToCharArray() | Sort-Object
-    $digits.8 = ($digits.8).ToCharArray() | Sort-Object
-    $digits.9 = ($digits.9).ToCharArray() | Sort-Object
+    $digits.0 = ($digits.0).ToCharArray() # Sort-Object
+    $digits.1 = ($digits.1).ToCharArray() #| Sort-Object
+    $digits.2 = ($digits.2).ToCharArray() #| Sort-Object
+    $digits.3 = ($digits.3).ToCharArray() #| Sort-Object
+    $digits.4 = ($digits.4).ToCharArray() #| Sort-Object
+    $digits.5 = ($digits.5).ToCharArray() #| Sort-Object
+    $digits.6 = ($digits.6).ToCharArray() #| Sort-Object
+    $digits.7 = ($digits.7).ToCharArray() #| Sort-Object
+    $digits.8 = ($digits.8).ToCharArray() #| Sort-Object
+    $digits.9 = ($digits.9).ToCharArray() #| Sort-Object
     
     $output = $outputs[$count] -split " "
     $multiply = [math]::Pow(10,($output.Count - 1))
     foreach ($set in $output -split " ") {
-        $set = $set.ToCharArray() | Sort-Object
+        $set = $set.ToCharArray() #| Sort-Object
         for ($x = 0; $x -le 9; $x++) {
             if ($set.Count -eq ($digits.($x)).count) {
                 $same = $true
