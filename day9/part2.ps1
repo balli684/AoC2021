@@ -53,8 +53,6 @@ foreach ($line in $in){
     $ypos++
 }
 
-#Write-Grid $grid -devider
-
 [System.Collections.ArrayList]$border = @()
 
 do {
@@ -85,10 +83,7 @@ do {
     }
 } while ($changed)
 
-#Write-Grid $grid -devider
-
 $basincount = 0
-$iteration = 1
 
 do {
     $changed = $false
@@ -101,7 +96,6 @@ do {
         }
     }
 
-    #Write-Grid $grid -devider
     for($xpos=1;$xpos -lt ($grid[$ypos].Count - 1);$xpos++) {
         for($ypos=1;$ypos -lt ($grid.Count - 1);$ypos++) {
             if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos-1][$xpos])) {
@@ -111,8 +105,6 @@ do {
         }
     }
 
-    #Write-Grid $grid -devider
-
     for($xpos=($grid[$ypos].Count - 2);$xpos -gt 0 ;$xpos--) {
         for($ypos=($grid.Count - 2);$ypos -gt 0;$ypos--) {
             if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos+1][$xpos])) {
@@ -121,8 +113,6 @@ do {
             }
         }
     }
-
-    #Write-Grid $grid -devider
 
     for($ypos=($grid.Count - 2);$ypos -gt 0;$ypos--) {
         for($xpos=($grid[$ypos].Count - 2);$xpos -gt 0 ;$xpos--) {
@@ -184,8 +174,6 @@ do {
             }
         }
     }
-
-    #Write-Grid $grid -devider
 
     [array]$top = @()
 
@@ -201,238 +189,16 @@ do {
         $basincount = $top.Count
         $changed = $true
     }
-    write-host "Itteration $iteration"
-    $iteration++
     $changed = $false
 } while ($changed)
 
 $top = $top | Sort-Object -Descending
 
-$top[0]
-$top[1]
-$top[2]
+#$top[0]
+#$top[1]
+#$top[2]
 $answer = $top[0] * $top[1] * $top[2]
 
 $answer
 
-Write-Grid $grid
-
-<#
-$old_answer = 0
-
-$run = 1
-do {
-    for($ypos=1;$ypos -lt ($grid.Count - 1);$ypos++) {
-        for($xpos=1;$xpos -lt ($grid[$ypos].Count - 1);$xpos++) {
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos][$xpos-1])) {
-                if ($null -ne $grid[$ypos][$xpos+1]) {
-                    $grid[$ypos][$xpos] += $grid[$ypos][$xpos-1]
-                    $grid[$ypos][$xpos-1] = 0
-                }
-                else {
-                    $grid[$ypos][$xpos-1] += $grid[$ypos][$xpos]
-                    $grid[$ypos][$xpos] = 0 
-                }
-                
-            }
-            #Write-Grid $grid -devider
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos-1][$xpos])) {
-                if ($null -ne $grid[$ypos+1][$xpos]) {
-                    $grid[$ypos][$xpos] += $grid[$ypos-1][$xpos]
-                    $grid[$ypos-1][$xpos] = 0
-                }
-                else {
-                    $grid[$ypos-1][$xpos] += $grid[$ypos][$xpos]
-                    $grid[$ypos][$xpos] = 0 
-                }
-                
-            }
-        }
-    }
-
-#    Write-Grid $grid
-
-    for($ypos=($grid.Count - 2);$ypos -gt 0;$ypos--) {
-        for($xpos=($grid[$ypos].Count - 2);$xpos -gt 0 ;$xpos--) {
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos][$xpos+1])) {
-                if ($null -ne $grid[$ypos][$xpos-1]) {
-                    $grid[$ypos][$xpos] += $grid[$ypos][$xpos+1]
-                    $grid[$ypos][$xpos+1] = 0
-                }
-                else {
-                    $grid[$ypos][$xpos+1] += $grid[$ypos][$xpos]
-                    $grid[$ypos][$xpos] = 0 
-                }
-            }
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos+1][$xpos])) {
-                if ($null -ne $grid[$ypos-1][$xpos]) {
-                    $grid[$ypos][$xpos] += $grid[$ypos+1][$xpos]
-                    $grid[$ypos+1][$xpos] = 0
-                }
-                else {
-                    $grid[$ypos+1][$xpos] += $grid[$ypos][$xpos]
-                    $grid[$ypos][$xpos] = 0 
-                }
-            }
-        }
-    }
-
-#    Write-Grid $grid
-
-
-    for($ypos=($grid.Count - 2);$ypos -gt 0;$ypos--) {
-        for($xpos=1;$xpos -lt ($grid[$ypos].Count - 1);$xpos++) {
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos][$xpos-1])) {
-                if ($null -ne $grid[$ypos][$xpos+1]) {
-                    $grid[$ypos][$xpos] += $grid[$ypos][$xpos-1]
-                    $grid[$ypos][$xpos-1] = 0
-                }
-                else {
-                    $grid[$ypos][$xpos-1] += $grid[$ypos][$xpos]
-                    $grid[$ypos][$xpos] = 0 
-                }
-                
-            }
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos+1][$xpos])) {
-                if ($null -ne $grid[$ypos-1][$xpos]) {
-                    $grid[$ypos][$xpos] += $grid[$ypos+1][$xpos]
-                    $grid[$ypos+1][$xpos] = 0
-                }
-                else {
-                    $grid[$ypos+1][$xpos] += $grid[$ypos][$xpos]
-                    $grid[$ypos][$xpos] = 0 
-                }
-                
-            }
-        }
-    }
-
-    for($ypos=1;$ypos -lt ($grid.Count - 1);$ypos++) {
-        for($xpos=($grid[$ypos].Count - 2);$xpos -gt 0 ;$xpos--) {
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos][$xpos+1])) {
-                if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos+1][$xpos])) {
-                    if ($null -ne $grid[$ypos][$xpos-1]) {
-                        $grid[$ypos][$xpos] += $grid[$ypos][$xpos+1]
-                        $grid[$ypos][$xpos+1] = 0
-                    }
-                    else {
-                        $grid[$ypos][$xpos+1] += $grid[$ypos][$xpos]
-                        $grid[$ypos][$xpos] = 0 
-                    }
-                }
-            }
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos-1][$xpos])) {
-                if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos+1][$xpos])) {
-                    if ($null -ne $grid[$ypos+1][$xpos]) {
-                        $grid[$ypos][$xpos] += $grid[$ypos-1][$xpos]
-                        $grid[$ypos-1][$xpos] = 0
-                    }
-                    else {
-                        $grid[$ypos-1][$xpos] += $grid[$ypos][$xpos]
-                        $grid[$ypos][$xpos] = 0 
-                    }
-                }
-            }
-        }
-    }
-<#
-    for($xpos=1;$xpos -lt ($grid[$ypos].Count - 1);$xpos++) {
-        for($ypos=1;$ypos -lt ($grid.Count - 1);$ypos++) {
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos][$xpos-1])) {
-                $grid[$ypos][$xpos] += $grid[$ypos][$xpos-1]
-                $grid[$ypos][$xpos-1] = 0
-            }
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos-1][$xpos])) {
-                $grid[$ypos][$xpos] += $grid[$ypos-1][$xpos]
-                $grid[$ypos-1][$xpos] = 0
-            }
-        }
-    }
-
-    for($xpos=($grid[$ypos].Count - 2);$xpos -gt 0 ;$xpos--) {
-        for($ypos=($grid.Count - 2);$ypos -gt 0;$ypos--) {
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos][$xpos+1])) {
-                $grid[$ypos][$xpos] += $grid[$ypos][$xpos+1]
-                $grid[$ypos][$xpos+1] = 0
-            }
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos+1][$xpos])) {
-                $grid[$ypos][$xpos] += $grid[$ypos+1][$xpos]
-                $grid[$ypos+1][$xpos] = 0
-            }
-        }
-    }
-
-    for($xpos=1;$xpos -lt ($grid[$ypos].Count - 1);$xpos++) {
-        for($ypos=($grid.Count - 2);$ypos -gt 0;$ypos--) {
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos][$xpos-1])) {
-                $grid[$ypos][$xpos] += $grid[$ypos][$xpos-1]
-                $grid[$ypos][$xpos-1] = 0
-            }
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos+1][$xpos])) {
-                $grid[$ypos][$xpos] += $grid[$ypos+1][$xpos]
-                $grid[$ypos+1][$xpos] = 0
-            }
-        }
-    }
-
-    for($xpos=($grid[$ypos].Count - 2);$xpos -gt 0 ;$xpos--) {
-        for($ypos=1;$ypos -lt ($grid.Count - 1);$ypos++) {
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos][$xpos+1])) {
-                $grid[$ypos][$xpos] += $grid[$ypos][$xpos+1]
-                $grid[$ypos][$xpos+1] = 0
-            }
-            if (($null -ne $grid[$ypos][$xpos]) -and ($null -ne $grid[$ypos-1][$xpos])) {
-                $grid[$ypos][$xpos] += $grid[$ypos-1][$xpos]
-                $grid[$ypos-1][$xpos] = 0
-            }
-        }
-    }
-
-    [array]$top = @()
-
-    for($ypos=0;$ypos -lt $grid.Count;$ypos++) {
-        for($xpos=0;$xpos -lt $grid[$ypos].Count;$xpos++) {
-            if ($grid[$ypos][$xpos] -gt 0) {
-                $top += $grid[$ypos][$xpos]
-            }
-        }
-    }
-
-    $top = $top | Sort-Object -Descending
-
-    $answer = $top[0] * $top[1] * $top[2]
-
-    if ($answer -gt $old_answer){
-        $old_answer = $answer
-        $modified = $true
-    }
-    else {
-        $modified = $false
-    }
-
-    write-host "Run: $run"
-    Write-Grid $grid -devider
-    $run++
-} while ($modified)
-
-<#
-Write-Grid $grid
-[array]$top = @()
-
-for($ypos=0;$ypos -lt $grid.Count;$ypos++) {
-    for($xpos=0;$xpos -lt $grid[$ypos].Count;$xpos++) {
-        if ($grid[$ypos][$xpos] -gt 0) {
-            $top += $grid[$ypos][$xpos]
-        }
-    }
-}
-
-$top = $top | Sort-Object -Descending
-
-$top[0]
-$top[1]
-$top[2]
-$answer = $top[0] * $top[1] * $top[2]
-
-$answer
-#>
+#Write-Grid $grid
