@@ -28,7 +28,12 @@ foreach ($line in $in){
         elseif ($CloseChars.Contains($character)) {
             $index = [array]::IndexOf($CloseChars,$character)
             if ($Open[-1] -eq $OpenChars[$index]){
-                $Open = $Open[0..($Open.Count-2)]
+                if ($Open.Count -gt 1) {
+                    $Open = $Open[0..($Open.Count-2)]
+                }
+                else {
+                    $Open = @()
+                }
             }
             else {
                 $answer += $Score[$index]
