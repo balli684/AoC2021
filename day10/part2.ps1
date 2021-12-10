@@ -11,11 +11,8 @@ else {
     $in = Get-Content .\input.txt
 }
 
-
-
 $OpenChars = @("(","[","{","<")
 $CloseChars = @(")","]","}",">")
-#$Score = @("1","2","3","4")
 
 [array]$answers = @()
 foreach ($line in $in){
