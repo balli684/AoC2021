@@ -64,46 +64,30 @@ for ($round = 1;$round -le $maxrounds;$round++) {
             for ($x=0;$x -lt $grid[$y].Count;$x++) {
                 if ($grid[$y][$x] -gt 9) {
                     $grid[$y][$x] = 0
-                    Try { 
-                        if ($grid[$y-1][$x-1]) {
-                            $grid[$y-1][$x-1]++
-                        }
-                    }Catch {}
-                    Try { 
-                        if ($grid[$y-1][$x]) {
-                            $grid[$y-1][$x]++
-                        }
-                    }Catch {}
-                    Try { 
-                        if ($grid[$y-1][$x+1]) {
-                            $grid[$y-1][$x+1]++
-                        }
-                    }Catch {}
-                    Try { 
-                        if ($grid[$y][$x-1]) {
-                            $grid[$y][$x-1]++
-                        }
-                    }Catch {}
-                    Try { 
-                        if ($grid[$y][$x+1]) {
-                            $grid[$y][$x+1]++
-                        }
-                    }Catch {}
-                    Try { 
-                        if ($grid[$y+1][$x-1]) {
-                            $grid[$y+1][$x-1]++
-                        }
-                    }Catch {}
-                    Try { 
-                        if ($grid[$y+1][$x]) {
-                            $grid[$y+1][$x]++
-                        }
-                    }Catch {}
-                    Try { 
-                        if ($grid[$y+1][$x+1]) {
-                            $grid[$y+1][$x+1]++
-                        }
-                    }Catch {}
+                    if ($grid[$y-1][$x-1]) {
+                        $grid[$y-1][$x-1]++
+                    }
+                    if ($grid[$y-1][$x]) {
+                        $grid[$y-1][$x]++
+                    }
+                    if ($grid[$y-1][$x+1]) {
+                        $grid[$y-1][$x+1]++
+                    }
+                    if ($grid[$y][$x-1]) {
+                        $grid[$y][$x-1]++
+                    }
+                    if ($grid[$y][$x+1]) {
+                        $grid[$y][$x+1]++
+                    }
+                    if ($grid[$y+1][$x-1]) {
+                        $grid[$y+1][$x-1]++
+                    }
+                    if ($grid[$y+1][$x]) {
+                        $grid[$y+1][$x]++
+                    }
+                    if ($grid[$y+1][$x+1]) {
+                        $grid[$y+1][$x+1]++
+                    }
                     $flashes++
                 }
             }
