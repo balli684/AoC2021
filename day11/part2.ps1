@@ -50,19 +50,7 @@ foreach ($line in $in){
 $maxrounds = 1000
 $flashes = 0
 
-for ($round = 0;$round -le $maxrounds;$round++) {
-    if ($grid[1][1] -eq 0)  {
-        $sum = 0
-        foreach ($line in $grid) {
-            foreach ($item in $line){
-                $sum += $item
-            }
-        }
-        if ($sum -eq 0){
-            $answer = $round
-            $round = $maxrounds
-        }
-    }
+for ($round = 1;$round -le $maxrounds;$round++) {
 
     for($y=1;$y -lt ($grid.Count - 1);$y++) {
         for ($x=1;$x -lt ($grid[$y].Count - 1);$x++) {
@@ -121,6 +109,20 @@ for ($round = 0;$round -le $maxrounds;$round++) {
             }
         }
     } while ($flashes -ne $prevflashes)
+
+    if ($grid[1][1] -eq 0)  {
+        $sum = 0
+        foreach ($line in $grid) {
+            foreach ($item in $line){
+                $sum += $item
+            }
+        }
+        if ($sum -eq 0){
+            $answer = $round
+            $round = $maxrounds
+        }
+    }
+
 }
 
 #$flashes
