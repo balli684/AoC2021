@@ -30,55 +30,6 @@ function Write-Grid {
     }
 }
 
-function Up-Adjecent {
-    param (
-    [Parameter(Mandatory=$true)]
-    [array]$grid,
-    [Parameter(Mandatory=$true)]
-    [int]$y,
-    [Parameter(Mandatory=$true)]
-    [int]$x
-    )
-
-    if ($y -gt 0){
-        $starty = $y - 1
-    }
-    else {
-        $starty = 0
-    }
-
-    if ($y -lt ($grid.Count - 1)){
-        $stopy = $y + 1
-    }
-    else {
-        $stopy = $grid.Count - 1
-    }
-
-    if ($x -gt 0){
-        $startx = $x - 1
-    }
-    else {
-        $startx = 0
-    }
-
-    if ($x -lt ($grid[0].Count - 1)){
-        $stopx = $x + 1
-    }
-    else {
-        $stopx = $grid[0].Count - 1
-    }
-
-    for($starty;$starty -le $stopy;$starty++) {
-        for($startx;$startx -le $stopx;$startx++) {
-            if (($starty -ne $y) -or ($startx -ne $x)) {
-                $grid[$starty][$startx]++
-                write-host "upped $startx $starty"
-            }
-        }
-    }
-    $grid
-}
-
 if ($test) {
     $in = Get-Content .\testinput.txt
 }
@@ -160,5 +111,3 @@ for ($round = 1;$round -le $maxrounds;$round++) {
 }
 
 $flashes
-
-#>
