@@ -20,27 +20,13 @@ foreach ($line in $in){
     $line = $line -replace "start",$start -replace "end",$end -split "-"
     $connections.Add($line) | Out-Null
 }
-#$connections
 
 [System.Collections.ArrayList]$steps = @{}
-#[hashtable]$steps = @{}
 $steps += @{"0"=$start}
-
-#[System.Collections.ArrayList]$step = @()
-#$step.add(@("#","A"))
-#$step.add(@("#","b"))
-#$steps += @{"1"=$step}
-#$step.add(@(($steps.0),"A"))
-#$step.add(@(($steps.0),"b"))
-#$steps += @{"1"=$step}
-
-#$steps
-
-
 
 $count = 1
 $routecount = 0
-#$maxcount = 10
+
 $newstep = $true
 while($newstep) {
     [array]$step = @()
@@ -67,6 +53,5 @@ while($newstep) {
     $count++
 }
 
-$steps
+#$steps
 $routecount
-#>
