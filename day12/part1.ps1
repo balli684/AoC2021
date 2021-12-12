@@ -13,8 +13,8 @@ else {
 
 [System.Collections.ArrayList]$connections=@()
 
-$start = "#"
-$end = "+"
+$start = "##"
+$end = "++"
 
 foreach ($line in $in){
     $line = $line -replace "start",$start -replace "end",$end -split "-"
@@ -46,7 +46,7 @@ while($newstep) {
     [array]$step = @()
     foreach ($route in $steps.($count-1)) {
         foreach ($connection in $connections) {
-            [string]$last = $route.substring($route.length-1,1)
+            [string]$last = $route.substring($route.length-2,2)
             if(($connection.Contains($last)) -and ($last -ne $end)) {
                 [string]$newcave = $connection[([array]::IndexOf($connection,$last) - 1)]
                 if ((!($route.Contains($newcave))) -or ($newcave -cmatch '[A-Z]')) {
