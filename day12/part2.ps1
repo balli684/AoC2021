@@ -16,7 +16,7 @@ else {
 
 [System.Collections.ArrayList]$connections=@()
 
-$cavechar = 1
+$cavechar = 2
 $start = ("##").Substring(0,$cavechar)
 $end = ("++").Substring(0,$cavechar)
 
@@ -62,4 +62,4 @@ while($newstep) {
 
 $routecount
 
-$steps
+#$steps
