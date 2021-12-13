@@ -4,6 +4,7 @@ param (
     [System.IO.FileInfo]$inputfile = ".\input.txt"
 )
 
+. ..\functions.ps1
 
 if (Test-Path $inputfile) {
     $in = Get-Content $inputfile
