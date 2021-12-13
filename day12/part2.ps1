@@ -25,16 +25,18 @@ foreach ($line in $in){
     $connections.Add($line) | Out-Null
 }
 
-[System.Collections.ArrayList]$steps = @{}
-$steps += @{"0"="1" + $start}
+#[System.Collections.ArrayList]$steps = @{}
+#$steps += @{"0"="1" + $start}
+[array]$step = @("1" + $start)
 
 $count = 1
 $routecount = 0
 
-$newstep = $true
-while($newstep) {
+#$newstep = $true
+do {
+    $oldstep = $step
     [array]$step = @()
-    foreach ($route in $steps.($count-1)) {
+    foreach ($route in $oldstep) {
         foreach ($connection in $connections) {
             [string]$last = $route.substring($route.length - $cavechar,$cavechar)
             if(($connection.Contains($last)) -and ($last -ne $end)) {
@@ -65,16 +67,17 @@ while($newstep) {
 #                    $step += ($route -replace "1","0") + $newcave
 #                }
             }
-        }
+#        }
     }
-    if ($step.Count){
-        $steps += @{"$count"=$step}
-    }
-    else {
-        $newstep=$false
+    
+    #if ($step.Count){
+    #    $steps += @{"$count"=$step}
+    #}
+    #else {
+    #    $newstep=$false
     }
     $count++
-}
+} while($oldstep.Count)
 
 $routecount
 
