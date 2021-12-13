@@ -14,102 +14,56 @@ else {
     throw
 }
 
-[array]$xcor = @()
-[array]$ycor = @()
+[array]$xcoords = @()
+[array]$ycoords = @()
 [System.Collections.ArrayList]$instructions = @()
 
 foreach ($line in $in){
     if ($line -like "*,*") {
         $line = $line -split ","
-        $xcor += [int]$line[0]
-        $ycor += [int]$line[1]
+        $xcoords += [int]$line[0]
+        $ycoords += [int]$line[1]
     }
     elseif ($line -like "fold along*") {
         $instructions.add(($line -split " ")[-1] -split "=") | Out-Null
     }
 }
 
-#($ycor | Measure-Object -Maximum).maximum + 1
-#($xcor | Measure-Object -Maximum).maximum + 1
-
-$grid = New-Object "PSobject[][]" (($ycor | Measure-Object -Maximum).maximum + 1),(($xcor | Measure-Object -Maximum).maximum + 1)
-
-for($count=0;$count -lt $xcor.Count;$count++){
-    $grid[$ycor[$count]][$xcor[$count]] = "#"
-}
-#Write-Grid $grid
-#$count = 1
-#$instruction = $instructions[1]
 foreach ($instruction in $instructions) {
-    #write-host "instruction $instruction"
-    if($instruction[0] -eq "y") {
-        if ([int]$instruction[1] -ge ($grid.Count) / 2) {
-            #write-host "no dif" 
-            $dif1 = 0
-            [int]$dif2 = ([int]$instruction[1] * 2) - ($grid.Count - 1)
-            $gridnew = New-Object "PSobject[][]" ([int]$instruction[1]),($grid[0].Count)
-        }
-        else {
-            [int]$dif1 = ($grid.Count - 1) - ([int]$instruction[1] * 2)
-            $dif2 = 0
-            #write-host "dif is $dif"
-            $gridnew = New-Object "PSobject[][]" (($grid.Count - 1) - [int]$instruction[1]),($grid[0].Count)
-        }
-        #Write-Host "Dif is $dif"
-        for($y=0;$y -lt [int]$instruction[1];$y++) {
-            for($x=0;$x -lt $gridnew[0].Count;$x++) {
-                if ($grid[$y][$x]) {
-                    #Write-Host "hit"
-                    try {$gridnew[$y+$dif1][$x] = $grid[$y][$x]} catch {write-host "Y: $y - X: $x"}
-                }
+    if ($instruction[0] -eq "y") {
+        $ymax = (($ycoords | Measure-Object -Maximum).maximum)
+        for ($count=0;$count -lt $ycoords.Count;$count++) {
+            if ($ycoords[$count] -gt $instruction[1]) {
+                $ycoords[$count] = (2 * $instruction[1]) - $ycoords[$count]
             }
-        }
-        for($y=($grid.Count - 1);$y -gt [int]$instruction[1];$y--) {
-            for($x=0;$x -lt $gridnew[0].Count;$x++) {
-                if($grid[$y][$x]) {
-                    #Write-Host "hit"
-                    try {$gridnew[($grid.Count - 1) - $y][$x] = $grid[$y][$x]} catch {write-host "Y: $y - X: $x"}
-                }
+            elseif ($ycoords[$count] -eq $instruction[1]) {
+                $ycoords[$count] = $null
+                $xcoords[$count] = $null
             }
         }
     }
-    else {
-        if ([int]$instruction[1] -ge ($grid[0].Count) / 2) {
-            #write-host "GT"
-            $dif = 0
-            $gridnew = New-Object "PSobject[][]" $grid.Count,([int]$instruction[1])
-            #$gridnew = New-Object "PSobject[][]" $grid.Count,(($grid[0].Count - 1) - [int]$instruction[1])
-        }
-        else {
-            #write-host "else"
-            
-            #[int]$dif = [int]$instruction[1] - [math]::Round(($grid[0].Count) / 2)
-            [int]$dif = ($grid[0].Count - 1) - ([int]$instruction[1] * 2)
-            #$gridnew = New-Object "PSobject[][]" $grid.Count,([int]$instruction[1])
-            $gridnew = New-Object "PSobject[][]" $grid.Count,(($grid[0].Count - 1) - [int]$instruction[1])
-        }
-            #Write-Host "Dif is $dif"
-            for($x=0;$x -lt [int]$instruction[1];$x++) {
-                for($y=0;$y -lt $gridnew.Count;$y++) {
-                    if ($grid[$y][$x]) {
-                        try {$gridnew[$y][$x+$dif] = $grid[$y][$x]} catch {write-host "Y: $y - X: $x"}
-                        #$gridnew[$y][$x+$dif] = $grid[$y][$x]
-                    }
-                }
+    elseif ($instruction[0] -eq "x") {
+        $xmax = (($xcoords | Measure-Object -Maximum).maximum)
+        for ($count=0;$count -lt $xcoords.Count;$count++) {
+            if ($xcoords[$count] -gt $instruction[1]) {
+                $xcoords[$count] = (2 * $instruction[1]) - $xcoords[$count]
             }
-            for($x=($grid[0].Count - 1);$x -gt [int]$instruction[1];$x--) {
-                for($y=0;$y -lt $gridnew.Count;$y++) {
-                    if($grid[$y][$x]) {
-                        try {$gridnew[$y][($grid[0].Count - 1) - $x] = $grid[$y][$x]} catch {write-host "Y: $y - X: $x"}
-                        #$gridnew[$y][$x] = $grid[$y][($grid[0].Count + 2) - $x]
-                    }
-                }
+            elseif ($xcoords[$count] -eq $instruction[1]) {
+                $ycoords[$count] = $null
+                $xcoords[$count] = $null
             }
-#    $count++
+        }
     }
-    $grid = $gridnew
-#    Write-Host $instruction
-#    Write-Grid $grid -devider
+} 
+
+
+
+$grid = New-Object "PSobject[][]" (($ycoords | Measure-Object -Maximum).maximum + 1),(($xcoords | Measure-Object -Maximum).maximum + 1)
+
+for($count=0;$count -lt $ycoords.Count;$count++){
+    if (($null -ne $ycoords[$count]) -and ($null -ne $xcoords[$count])){
+        $grid[$ycoords[$count]][$xcoords[$count]] = "#"
+    }
 }
 
-Write-Grid $gridnew
+Write-Grid $grid
