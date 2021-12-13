@@ -39,15 +39,31 @@ while($newstep) {
             [string]$last = $route.substring($route.length - $cavechar,$cavechar)
             if(($connection.Contains($last)) -and ($last -ne $end)) {
                 [string]$newcave = $connection[([array]::IndexOf($connection,$last) - 1)]
-                if ((!($route.Contains($newcave))) -or ($newcave -cmatch '[A-Z]')) {
+                if ($newcave -eq $end) {
+                    $routecount++
+                }
+                elseif ($newcave -ne $start) {
+                    if ($newcave -cmatch '[A-Z]'){
                     $step += $route + $newcave
-                    if ($newcave -eq $end) {
-                        $routecount++
+                    }
+                    else {
+                        if (!($route.Contains($newcave))) {
+                            $step += $route + $newcave
+                        }
+                        elseif ($route.substring(0,1) -eq "1") {
+                            $step += ($route -replace "1","0") + $newcave
+                        }
                     }
                 }
-                elseif (($route.substring(0,1) -eq "1") -and ($newcave -ne $start) -and ($newcave -ne $end)){
-                    $step += ($route -replace "1","0") + $newcave
-                }
+#                if ((!($route.Contains($newcave))) -or ($newcave -cmatch '[A-Z]')) {
+#                    $step += $route + $newcave
+#                    if ($newcave -eq $end) {
+#                        $routecount++
+#                    }
+#                }
+#                elseif (($route.substring(0,1) -eq "1") -and ($newcave -ne $start) -and ($newcave -ne $end)){
+#                    $step += ($route -replace "1","0") + $newcave
+#                }
             }
         }
     }
