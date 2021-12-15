@@ -54,9 +54,7 @@ foreach ($instruction in $instructions) {
             }
         }
     }
-} 
-
-
+}
 
 $grid = New-Object "PSobject[][]" (($ycoords | Measure-Object -Maximum).maximum + 1),(($xcoords | Measure-Object -Maximum).maximum + 1)
 

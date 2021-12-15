@@ -14,30 +14,39 @@ else {
     throw
 }
 
-$multiplier = 2
+$multiplier = 5
+
 $grid = New-Object "PSobject[][]" ($in.Count * $multiplier),($in[0].Length * $multiplier)
 $gridpath = New-Object "PSobject[][]" $grid.Count,$grid[0].Count
 
 $y = 0
 foreach ($line in $in){
     for($x=0;$x -lt $line.Length;$x++) {
-        $grid[$y][$x] = [int]$line.Substring($x,1)
-        $grid[$y][$x] = [int]$line.Substring($x,1)
+        for($mul=0;$mul -lt $multiplier;$mul++) {
+            $grid[$y][$x+($line.Length * $mul)] = [int]$line.Substring($x,1) + $mul
+        }
     }
     $y++
 }
 
-Write-grid $grid
+for ($y = 0;$y -lt $in.count;$y++) {
+    for($x=0;$x -lt $grid[$y].Count;$x++) {
+        for($mul=1;$mul -lt $multiplier;$mul++) {
+            $grid[$y+($in.Count * $mul)][$x] = $grid[$y][$x] + $mul
+        }
+    }
+}
 
-#for($y=0;$y -lt $grid.Count;$y++) {
-#    for($x=0;$x -lt $grid[$y].Count;$x++) {
-#
-#    }
-#}
+for($y=0;$y -lt $grid.Count;$y++) {
+    for($x=0;$x -lt $grid[$y].Count;$x++) {
+        if($grid[$y][$x] -gt 9) {
+            $grid[$y][$x] -= 9
+        }
+    }
+}
 
+Write-Host "Grid filled"
 
-
-<#
 $gridpath[0][0] = 0
 
 for($x=1;$x -lt $grid[0].Count;$x++) {
@@ -59,7 +68,9 @@ for($y=1;$y -lt $grid.Count;$y++) {
     }
 }
 
-#Write-Grid $gridpath -devider
+Write-Host "First walkthrough"
+
+$count = 1
 do {
     $changed = $false
     for($y=1;$y -lt $grid.Count;$y++) {
@@ -86,10 +97,8 @@ do {
             }
         }
     }
-} while (!($changed))
-
-#Write-Grid $gridpath
+    Write-Host "Round $count"
+    $count++
+} while ($changed)
 
 $gridpath[$gridpath.Count-1][$gridpath[0].Count-1]
-
-#>

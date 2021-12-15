@@ -48,7 +48,7 @@ for($y=1;$y -lt $grid.Count;$y++) {
         }
     }
 }
-
+$count = 1
 #Write-Grid $gridpath -devider
 do {
     $changed = $false
@@ -76,7 +76,9 @@ do {
             }
         }
     }
-} while (!($changed))
+    Write-Host "Round $count"
+    $count++
+} while ($changed)
 
 #Write-Grid $gridpath
 
