@@ -14,31 +14,6 @@ else {
     throw
 }
 
-function LiteralValue {
-    param (
-        [Parameter()]
-        [int]$position
-    )
-
-    [hashtable]$return = @{}
-    $return += @{"IsLiteral"=$false}
-    $return += @{"End"="0"}
-    $return += @{"Version"="0"}
-
-    if ($transmission.Substring($start+3,3) -eq "100") {
-        $return.IsLiteral = $true
-        $return.Version = [Convert]::ToInt32($transmission.Substring($start,3),2)
-        $position += 6
-        while($transmission.Substring($position,1) -eq "1") {
-            $position += 5
-        }
-        
-        $return.End = $position + 5
-
-    }
-    return $return
-}
-
 function CheckPacket {
     param (
         [Parameter()]
@@ -51,7 +26,6 @@ function CheckPacket {
 
     if ($transmission.Substring($position+3,3) -eq "100") {
         $return.Type = "Literal"
-        #$return.Version = [Convert]::ToInt32($transmission.Substring($start,3),2)
         $position += 6
         while($transmission.Substring($position,1) -eq "1") {
             $position += 5
@@ -62,7 +36,6 @@ function CheckPacket {
     else {
         if ($transmission.Substring($position+6,1) -eq "0") {
             $return.Type = "Opp0"
-            #$return.Version = [Convert]::ToInt32($transmission.Substring($start,3),2)
             $return += @{"hLength" = 22}
             $return += @{"pLength" = [Convert]::ToInt32($transmission.Substring($position+7,15),2) + 22}
             while ($return.pLength % 4){
@@ -71,7 +44,6 @@ function CheckPacket {
         }
         else {
             $return.Type = "Opp1"
-            #$return.Version = [Convert]::ToInt32($transmission.Substring($start,3),2)
             $return += @{"hLength" = 18}
             $return += @{"pCount" = [Convert]::ToInt32($transmission.Substring($start+7,11),2)}
         }
@@ -103,19 +75,13 @@ for($x=0;$x -lt $in.Length;$x++) {
     $transmission += $hex.($in.Substring($x,1))
 }
 
-#$transmission
-
-#[array]$packets = @()
 [int]$start = 0
-[int]$end = 0
 [int]$version = 0
 [hashtable]$packetinfo = @{}
 $dept = 1
 while ($dept){
-    #$transmission.Substring($start)
     $packetinfo += @{$dept=(CheckPacket -position $start)}
     if (($packetinfo.($dept)).Type -eq "Literal") {
-        #$packetinfo.($dept)
         $version += ($packetinfo.($dept)).Version
         $start = ($packetinfo.($dept)).End
         $packetinfo.Remove($dept)
@@ -136,20 +102,16 @@ while ($dept){
         }
     }
     elseif (($packetinfo.($dept)).Type -eq "Opp0") {
-        #$packetinfo.($dept)
         $version += ($packetinfo.($dept)).Version
         $start += ($packetinfo.($dept)).hLength
         $dept++        
     }
     elseif (($packetinfo.($dept)).Type -eq "Opp1") {
-        #$packetinfo.($dept)
         $version += ($packetinfo.($dept)).Version
         $start += ($packetinfo.($dept)).hLength
         $dept++
     }
     if (($start -ge $transmission.Length) -or !(($transmission.Substring($start)).contains("1"))) {
-        #write-host "Ending"
-        #$transmission.Substring($start)
         $dept = 0
     }
 }
