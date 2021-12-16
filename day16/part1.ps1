@@ -39,6 +39,46 @@ function LiteralValue {
     return $return
 }
 
+function CheckPacket {
+    param (
+        [Parameter()]
+        [int]$position
+    )
+
+    [hashtable]$return = @{}
+    $return += @{"Type"=""}
+    $return += @{"Version"=[Convert]::ToInt32($transmission.Substring($position,3),2)}
+
+    if ($transmission.Substring($position+3,3) -eq "100") {
+        $return.Type = "Literal"
+        #$return.Version = [Convert]::ToInt32($transmission.Substring($start,3),2)
+        $position += 6
+        while($transmission.Substring($position,1) -eq "1") {
+            $position += 5
+        }
+        $return += @{"End"=$position + 5}
+
+    }
+    else {
+        if ($transmission.Substring($position+6,1) -eq "0") {
+            $return.Type = "Opp0"
+            #$return.Version = [Convert]::ToInt32($transmission.Substring($start,3),2)
+            $return += @{"hLength" = 22}
+            $return += @{"pLength" = [Convert]::ToInt32($transmission.Substring($position+7,15),2) + 22}
+            while ($return.pLength % 4){
+                $return.pLength++
+            }
+        }
+        else {
+            $return.Type = "Opp1"
+            #$return.Version = [Convert]::ToInt32($transmission.Substring($start,3),2)
+            $return += @{"hLength" = 18}
+            $return += @{"pCount" = [Convert]::ToInt32($transmission.Substring($start+7,11),2)}
+        }
+    }
+    return $return
+}
+
 [hashtable]$hex = @{}
 $hex += @{"0"="0000"}
 $hex += @{"1"="0001"}
@@ -65,41 +105,53 @@ for($x=0;$x -lt $in.Length;$x++) {
 
 #$transmission
 
-
 #[array]$packets = @()
 [int]$start = 0
 [int]$end = 0
 [int]$version = 0
-while ($end + 1 -lt $transmission.Length){
-    $transmission.Substring($start,$transmission.Length-$start)
-    #$version += [Convert]::ToInt32($transmission.Substring($start,3),2)
-    $literal = LiteralValue -position $start
-    if ($literal.IsLiteral) {
-        $version += $literal.Version
-        $end = $literal.End
-    }else {
-        if ($transmission.Substring($start+6,1) -eq "0") {
-            #$pLength = [Convert]::ToInt32($transmission.Substring($start+7,15),2) + 22
-            #while ($pLength % 4){
-            #    $pLength++
-            #}
-            $end = $start + 22
+[hashtable]$packetinfo = @{}
+$dept = 1
+while ($dept){
+    #$transmission.Substring($start)
+    $packetinfo += @{$dept=(CheckPacket -position $start)}
+    if (($packetinfo.($dept)).Type -eq "Literal") {
+        #$packetinfo.($dept)
+        $version += ($packetinfo.($dept)).Version
+        $start = ($packetinfo.($dept)).End
+        $packetinfo.Remove($dept)
+        if ($packetinfo.($dept-1).pCount) {
+            if ($packetinfo.($dept-1).pCount -eq 1) {
+                $packetinfo.Remove($dept - 1)
+                $dept--
+            }
+            else {
+                $packetinfo.($dept-1).pCount--
+            }
         }
-        else {
-            #$pCount = [Convert]::ToInt32($transmission.Substring($start+7,11),2)
-            $end = $start+18
-            #$count = 0
-            #    if($transmission.Substring($end,1) -eq "1") {
-            #        $end += 5
-            #    }
+        if ($packetinfo.($dept-1).pLength) {
+            if ($start -ge $packetinfo.($dept-1).pLength) {
+                $packetinfo.Remove($dept - 1)
+                $dept--
+            }
         }
     }
-    #$packets += $transmission.Substring($start,$end - $start)
-    while ($end % 4){
-        $end++
+    elseif (($packetinfo.($dept)).Type -eq "Opp0") {
+        #$packetinfo.($dept)
+        $version += ($packetinfo.($dept)).Version
+        $start += ($packetinfo.($dept)).hLength
+        $dept++        
     }
-    $start = $end
-    #$end=$transmission.Length
+    elseif (($packetinfo.($dept)).Type -eq "Opp1") {
+        #$packetinfo.($dept)
+        $version += ($packetinfo.($dept)).Version
+        $start += ($packetinfo.($dept)).hLength
+        $dept++
+    }
+    if (($start -ge $transmission.Length) -or !(($transmission.Substring($start)).contains("1"))) {
+        #write-host "Ending"
+        #$transmission.Substring($start)
+        $dept = 0
+    }
 }
 
 $version
