@@ -137,19 +137,20 @@ for($x=0;$x -lt $in.Length;$x++) {
 }
 
 [int]$start = 0
-#[int]$version = 0
+[int]$version = 0
 [hashtable]$packetinfo = @{}
 [hashtable]$operator = @{}
 $dept = 1
 while ($dept){
     $packetinfo += @{$dept=(CheckPacket -position $start)}
     if (($packetinfo.($dept)).Type -eq "Literal") {
+        $version += ($packetinfo.($dept)).Version
         #$packetinfo.($dept)
         #$version += ($packetinfo.($dept)).Version
         $start = ($packetinfo.($dept)).End
         $value = ($packetinfo.($dept)).Value
         $packetinfo.Remove($dept)
-        if ($packetinfo.($dept-1).pCount) {
+        if ($packetinfo.($dept-1).Type -eq "Opp1") {
             if ($packetinfo.($dept-1).pCount -eq 1) {
                 #write-host $value
                 $operator.($dept-1) += $value
@@ -165,8 +166,9 @@ while ($dept){
                 $operator.($dept-1) += $value
                 $packetinfo.($dept-1).pCount--
             }
+            $value = ($packetinfo.($dept)).Value
         }
-        elseif ($packetinfo.($dept-1).Type -eq "Opp0") {
+        if ($packetinfo.($dept-1).Type -eq "Opp0") {
             #write-host "Pack type: $($packetinfo.($dept-1).Type)"
             if ($start -ge $packetinfo.($dept-1).pLength) {
                 $operator.($dept-1) += $value
@@ -179,23 +181,26 @@ while ($dept){
                 }
             }
             else {
-                #write-host "add value $value"
-                $operator.($dept-1) += $value
+                if ($null -ne $value) {#write-host "add value $value"
+                    $operator.($dept-1) += $value
+                }
             }
         }
     }
-    elseif (($packetinfo.($dept)).Type -eq "Opp0") {
+    else {#(($packetinfo.($dept)).Type -eq "Opp0") {
+        $version += ($packetinfo.($dept)).Version
         $start += ($packetinfo.($dept)).hLength
         $operator += @{$dept=[array]@(($packetinfo.($dept)).Id)}
         $dept++
                
     }
-    elseif (($packetinfo.($dept)).Type -eq "Opp1") {
-        $start += ($packetinfo.($dept)).hLength
-        $operator += @{$dept=[array]@(($packetinfo.($dept)).Id)}
-        $dept++
-        
-    }
+#    elseif (($packetinfo.($dept)).Type -eq "Opp1") {
+#        $version += ($packetinfo.($dept)).Version
+#        $start += ($packetinfo.($dept)).hLength
+#        $operator += @{$dept=[array]@(($packetinfo.($dept)).Id)}
+#        $dept++
+#        
+#    }
     if (($start -ge $transmission.Length) -or !(($transmission.Substring($start)).contains("1"))) {
         $out = CalcOperator $operator.1
         $dept = 0
@@ -205,4 +210,7 @@ while ($dept){
 #Write-Host "-----"
 $out
 
-#Not correct: 11889203665
+#Not correct: 11889203665 too low
+#Not correct: 119911959813
+
+write-host "Part 1: $version"
